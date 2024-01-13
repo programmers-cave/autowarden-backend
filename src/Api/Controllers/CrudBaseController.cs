@@ -24,8 +24,8 @@ public class CrudBaseController<TModel, TIndex, TRequestModel, TResponseModel> :
     where TRequestModel : class, IModelOf<TModel>, new()
     where TResponseModel : class, IModelOf<TModel>, new()
 {
-    protected readonly IRepository<TModel, TIndex> _repository;
-    protected readonly IMapper _mapper;
+    private protected readonly IRepository<TModel, TIndex> _repository;
+    private protected readonly IMapper _mapper;
     
     public CrudBaseController(IRepository<TModel, TIndex> repository, IMapper mapper)
     {
@@ -123,7 +123,7 @@ public class CrudBaseController<TModel, TIndex, TRequestModel, TResponseModel> :
         );
     }
     
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [
         SwaggerOperation(
             Summary = "Delete [ControllerNameVerbose] item.",
