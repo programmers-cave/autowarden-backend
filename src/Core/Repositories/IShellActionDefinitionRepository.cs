@@ -2,6 +2,6 @@
 
 namespace AutoWarden.Core.Repositories;
 
-public interface IActionDefinitionRepository : IReadOnlyRepository<ActionDefinition, string>
+public interface IShellActionDefinitionRepository : IRepository<ShellActionDefinition, string>
 {
 }

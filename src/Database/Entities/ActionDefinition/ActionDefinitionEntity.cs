@@ -2,9 +2,11 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace AutoWarden.Database.Entities;
+namespace AutoWarden.Database.Entities.ActionDefinition;
 
 [BsonCollection("ActionDefinitions")]
+[BsonDiscriminator(RootClass = true)]
+[BsonKnownTypes(typeof(ShellActionDefinitionEntity))]
 public class ActionDefinitionEntity : IEntity<string>
 {
     [BsonId]
@@ -12,5 +14,4 @@ public class ActionDefinitionEntity : IEntity<string>
     public string Id { get; set; } = null!;
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public string Body { get; set; } = null!;
 }

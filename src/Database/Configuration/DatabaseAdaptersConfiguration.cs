@@ -14,6 +14,7 @@ public static class DatabaseAdaptersConfiguration
         
         // Repositories
         services.AddTransient<IActionDefinitionRepository, ActionDefinitionRepository>();
+        services.AddTransient<IShellActionDefinitionRepository, ShellActionDefinitionRepository>();
         
         return services;
     }

@@ -39,8 +39,6 @@ builder.Services.AddSwaggerGen(options =>
     });
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-    // options.SchemaFilter<UnpatchableItemSchemaFilter>();
-    options.OperationFilter<PatchMethodOperationFilter>();
     options.OperationFilter<GenericDescriberOperationFilter>();
 });
 builder.Services.AddSwaggerGenNewtonsoftSupport();
@@ -59,3 +57,5 @@ if (app.Environment.IsDevelopment())
 // app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
+
+public partial class Program { }

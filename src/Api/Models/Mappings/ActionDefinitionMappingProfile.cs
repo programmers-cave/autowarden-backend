@@ -9,7 +9,24 @@ public class ActionDefinitionMappingProfile : Profile
 {
     public ActionDefinitionMappingProfile()
     {
-        CreateMap<ActionDefinitionRequestModel, ActionDefinition>();
-        CreateMap<ActionDefinition, ActionDefinitionResponseModel>();
+        // ActionDefinition
+        // RESPONSE => ENTITY
+        // ENTITY => RESPONSE
+        CreateMap<ActionDefinition, ActionDefinitionGetDto>();
+        CreateMap<ActionDefinition, ActionDefinitionGetCollectionDto>();
+
+        // ShellActionDefinition
+        // REQUEST => ENTITY
+        CreateMap<ShellActionDefinitionCreateDto, ShellActionDefinition>();
+        CreateMap<ShellActionDefinitionBodyCreateDto, ShellActionDefinitionBody>();
+
+        CreateMap<ShellActionDefinitionUpdateDto, ShellActionDefinition>();
+        CreateMap<ShellActionDefinitionBodyUpdateDto, ShellActionDefinitionBody>();
+        // ENTITY => RESPONSE
+        CreateMap<ShellActionDefinition, ShellActionDefinitionGetDto>();
+        CreateMap<ShellActionDefinitionBody, ShellActionDefinitionBodyGetDto>();
+
+        CreateMap<ShellActionDefinition, ShellActionDefinitionGetCollectionDto>();
+        CreateMap<ShellActionDefinitionBody, ShellActionDefinitionBodyGetCollectionDto>();
     }
 }

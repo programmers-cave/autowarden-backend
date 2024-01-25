@@ -7,30 +7,32 @@ namespace AutoWarden.Api.Swagger;
 
 public class GenericDescriberOperationFilter : IOperationFilter
 {
-    private string? _controllerName = null;
-    
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        if (context.MethodInfo.DeclaringType is not {IsGenericType: true} || context.MethodInfo.DeclaringType.GetGenericTypeDefinition() != typeof(CrudBaseController<,,,>))
+        if (context.MethodInfo.DeclaringType is not {IsGenericType: true} ||
+            (
+                context.MethodInfo.DeclaringType.GetGenericTypeDefinition() != typeof(CrudBaseController<,,,,,>)
+                && context.MethodInfo.DeclaringType.GetGenericTypeDefinition() != typeof(ReadBaseController<,,,>)
+            ))
             return;
         
-        _controllerName ??= operation.Tags[0].Name;
+        var controllerName = operation.Tags[0].Name;
         
         // Change descriptions
-        operation.Summary = ResolveString(operation.Summary);
-        operation.Description = ResolveString(operation.Description);
-        operation.OperationId = ResolveString(operation.OperationId);
+        operation.Summary = ResolveString(controllerName, operation.Summary);
+        operation.Description = ResolveString(controllerName, operation.Description);
+        operation.OperationId = ResolveString(controllerName, operation.OperationId);
 
         foreach (var key in operation.Responses.Keys)
         {
-            operation.Responses[key].Description = ResolveString(operation.Responses[key].Description);
+            operation.Responses[key].Description = ResolveString(controllerName, operation.Responses[key].Description);
         }
     }
 
-    private string ResolveString(string stringToResolve)
+    private string ResolveString(string controllerName, string stringToResolve)
     {
         return stringToResolve
-            .Replace("[ControllerName]", _controllerName)
-            .Replace("[ControllerNameVerbose]", _controllerName.Humanize().Transform(To.TitleCase));
+            .Replace("[ControllerName]", controllerName)
+            .Replace("[ControllerNameVerbose]", controllerName.Humanize().Transform(To.TitleCase));
     }
 }

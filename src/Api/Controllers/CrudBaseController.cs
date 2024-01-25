@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using AutoWarden.Api.Json;
-using AutoWarden.Api.Models.Response;
 using AutoWarden.Core;
 using AutoWarden.Core.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -18,68 +17,21 @@ namespace AutoWarden.Api.Controllers;
  */
 [Consumes("application/json")]
 [Produces("application/json")]
-public class CrudBaseController<TModel, TIndex, TRequestModel, TResponseModel> : ControllerBase
+public class CrudBaseController<TModel, TIndex, TItemModel, TCollectionModel, TCreateModel, TUpdateModel> : ReadBaseController<TModel, TIndex, TItemModel, TCollectionModel>
     where TIndex : IEquatable<TIndex>
     where TModel : class, IIndexableObject<TIndex>, new()
-    where TRequestModel : class, IModelOf<TModel>, new()
-    where TResponseModel : class, IModelOf<TModel>, new()
+    where TItemModel : class, IModelOf<TModel>, new()
+    where TCollectionModel : class, IModelOf<TModel>, new()
+    where TCreateModel : class, IModelOf<TModel>, new()
+    where TUpdateModel : class, IModelOf<TModel>, new()
 {
     private protected readonly IRepository<TModel, TIndex> _repository;
-    private protected readonly IMapper _mapper;
     
-    public CrudBaseController(IRepository<TModel, TIndex> repository, IMapper mapper)
+    public CrudBaseController(IRepository<TModel, TIndex> repository, IMapper mapper) : base(repository, mapper)
     {
         _repository = repository;
-        _mapper = mapper;
     }
 
-    [HttpGet]
-    [
-        SwaggerOperation(
-            Summary = "Get [ControllerNameVerbose] collection.",
-            Description = "Gets [ControllerNameVerbose] collection.",
-            OperationId = "[ControllerName]:GetCollection"
-        ),
-        SwaggerResponse(StatusCodes.Status200OK, "[ControllerNameVerbose] collection"),
-    ]
-    public async Task<ActionResult<PaginatedResponse<TResponseModel>>> GetCollection(
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10
-    )
-    {
-        var totalCount = await _repository.GetTotalCountAsync();
-
-        var response = new PaginatedResponse<TResponseModel>
-        {
-            Page = page,
-            PageSize = pageSize,
-            TotalCount = totalCount,
-            TotalPages = (int) Math.Ceiling((double) totalCount / pageSize),
-            Data = _mapper.Map<List<TResponseModel>>(await _repository.GetRangeAsync((page - 1) * pageSize, pageSize))
-        };
-
-        return Ok(response);
-    }
-    
-    [HttpGet("{id}")]
-    [
-        SwaggerOperation(
-            Summary = "Get single [ControllerNameVerbose] item.",
-            Description = "Gets single [ControllerNameVerbose] item.",
-            OperationId = "[ControllerName]:Get"
-        ),
-        SwaggerResponse(StatusCodes.Status200OK, "[ControllerNameVerbose] found"),
-        SwaggerResponse(StatusCodes.Status404NotFound, "[ControllerNameVerbose] not found")
-    ]
-    public async Task<ActionResult<TResponseModel>> Get(
-        [FromRoute, SwaggerParameter("id")] TIndex id
-    )
-    {
-        var obj = await _repository.GetByIdAsync(id);
-        
-        return Ok(_mapper.Map<TResponseModel>(obj));
-    }
-    
     [HttpPost]
     [
         SwaggerOperation(
@@ -89,7 +41,7 @@ public class CrudBaseController<TModel, TIndex, TRequestModel, TResponseModel> :
         ),
         SwaggerResponse(StatusCodes.Status201Created, "[ControllerNameVerbose] created")
     ]
-    public async Task<ActionResult<TResponseModel>> Post([FromBody] TRequestModel requestModel)
+    public async Task<ActionResult<TItemModel>> Post([FromBody] TCreateModel requestModel)
     {
         var baseModel = _mapper.Map<TModel>(requestModel);
         await _repository.CreateAsync(baseModel);
@@ -107,9 +59,9 @@ public class CrudBaseController<TModel, TIndex, TRequestModel, TResponseModel> :
         SwaggerResponse(StatusCodes.Status200OK, "[ControllerNameVerbose] updated"),
         SwaggerResponse(StatusCodes.Status404NotFound, "[ControllerNameVerbose] not found")
     ]
-    public async Task<ActionResult<TResponseModel>> Patch(
+    public async Task<ActionResult<TItemModel>> Patch(
         [FromRoute, SwaggerParameter("Id")] TIndex id,
-        [FromBody] MergePatchJson<TRequestModel> requestModelJson
+        [FromBody] MergePatchJson<TUpdateModel> requestModelJson
     )
     {
         var objToUpdate = await _repository.GetByIdAsync(id);
@@ -119,7 +71,7 @@ public class CrudBaseController<TModel, TIndex, TRequestModel, TResponseModel> :
         return CreatedAtAction(
             nameof(Get),
             new {id},
-            _mapper.Map<ActionDefinitionResponseModel>(baseModel)
+            _mapper.Map<TItemModel>(baseModel)
         );
     }
     
@@ -133,7 +85,7 @@ public class CrudBaseController<TModel, TIndex, TRequestModel, TResponseModel> :
         SwaggerResponse(StatusCodes.Status204NoContent, "[ControllerNameVerbose] deleted"),
         SwaggerResponse(StatusCodes.Status404NotFound, "[ControllerNameVerbose] not found")
     ]
-    public async Task<ActionResult<TResponseModel>> Delete(
+    public async Task<ActionResult> Delete(
         [FromRoute, SwaggerParameter("Id")] TIndex id
     )
     {

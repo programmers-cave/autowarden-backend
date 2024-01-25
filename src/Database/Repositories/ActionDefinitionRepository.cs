@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using AutoWarden.Database.Entities;
 using AutoWarden.Core.Models.ActionDefinition;
 using AutoWarden.Core.Repositories;
+using AutoWarden.Database.Entities.ActionDefinition;
+using AutoWarden.Database.Repositories.Base;
 
 namespace AutoWarden.Database.Repositories;
 
-public class ActionDefinitionRepository : Repository<ActionDefinition, ActionDefinitionEntity, string>, IActionDefinitionRepository
+public class ActionDefinitionRepository : ReadOnlyRepository<ActionDefinition, ActionDefinitionEntity, string>, IActionDefinitionRepository
 {
     public ActionDefinitionRepository(IMapper mapper, MongoDbService mongoDbService) : base(mapper, mongoDbService)
     {

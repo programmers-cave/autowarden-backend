@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using AutoWarden.Core.Models;
+﻿using AutoWarden.Core.Models;
 using Newtonsoft.Json.Linq;
 
 namespace AutoWarden.Api.Json;
@@ -34,17 +33,7 @@ public static class ModelPatcher
     public static List<string> GetAllowedKeys(Type type) 
     {
         return type.GetProperties()
-            .Where(p => p.GetCustomAttribute<UnpatchableAttribute>() == null)
             .Select(p => p.Name.ToLower())
             .ToList();
     }
-    
-    // public static List<string> GetAllowedKeys<TModel>() 
-    //     where TModel : class, new()
-    // {
-    //     return JObject.FromObject(new TModel()).Properties()
-    //         .Where(p => p.Value.Annotation<UnpatchableAttribute>() == null)
-    //         .Select(p => p.Name.ToLower())
-    //         .ToList();
-    // }
 }

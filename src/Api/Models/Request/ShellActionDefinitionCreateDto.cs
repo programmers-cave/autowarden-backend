@@ -1,36 +1,39 @@
-﻿using AutoWarden.Api.Json;
-using AutoWarden.Core.Models;
+﻿using AutoWarden.Core.Models;
 using AutoWarden.Core.Models.ActionDefinition;
 
 namespace AutoWarden.Api.Models.Request;
 
 /// <summary>
-/// Request model for Action Definition.
+/// Request model for Shell Action Definition (Create).
 /// </summary>
-public class ActionDefinitionRequestModel : IModelOf<ActionDefinition>
+public class ShellActionDefinitionCreateDto : IModelOf<ShellActionDefinition>
 {
     /// <summary>
     /// Id. Must be unique within the system.
     /// </summary>
     /// <example>install-docker</example>
-    [Unpatchable]
     public string Id { get; set; } = null!;
-    
+
     /// <summary>
     /// Displayed name.
     /// </summary>
     /// <example>Install Docker</example>
     public string Name { get; set; } = null!;
-    
+
     /// <summary>
     /// Displayed description.
     /// </summary>
     /// <example>It can install docker on most Linux systems.</example>
     public string Description { get; set; } = null!;
-    
+
+    public ShellActionDefinitionBodyCreateDto Body { get; set; } = null!;
+}
+
+public class ShellActionDefinitionBodyCreateDto : IModelOf<ShellActionDefinitionBody>
+{
     /// <summary>
-    /// JSON body.
+    /// Script to execute on server.
     /// </summary>
-    /// <example>{"type": "shell", "inline": ["apt-get install docker"]}</example>
-    public string Body { get; set; } = null!;
+    /// <example>apt-get install docker</example>
+    public string Script { get; set; } = null!;
 }

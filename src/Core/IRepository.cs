@@ -1,13 +1,9 @@
 ﻿namespace AutoWarden.Core;
 
-public interface IRepository<T, TId> 
+public interface IRepository<T, TId> : IReadOnlyRepository<T, TId>
     where T : class 
     where TId: IEquatable<TId>
 {
-    Task<List<T>> GetRangeAsync(int skip, int take);
-    
-    Task<T> GetByIdAsync(TId id);
-    
     Task<T> CreateAsync(T obj);
     
     Task<T> ReplaceAsync(T obj);
@@ -17,6 +13,4 @@ public interface IRepository<T, TId>
     
     Task DeleteAsync(T obj);
     Task DeleteByIdAsync(TId id);
-
-    Task<int> GetTotalCountAsync();
 }

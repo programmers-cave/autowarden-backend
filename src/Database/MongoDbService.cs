@@ -1,22 +1,24 @@
 ﻿using AutoWarden.Database.Attributes;
-using AutoWarden.Database.Entities;
 using MongoDB.Driver;
 
 namespace AutoWarden.Database;
 
 public class MongoDbService
 {
+    private readonly MongoClient _client;
     private readonly IMongoDatabase _database;
     
     public MongoDbService(MongoDbSettings mongoDbSettings)
     {
-        var client = new MongoClient(mongoDbSettings.ConnectionString);
-        _database = client.GetDatabase(mongoDbSettings.DatabaseName);
+        _client = new MongoClient(mongoDbSettings.ConnectionString);
+        _database = _client.GetDatabase(mongoDbSettings.DatabaseName);
     }
-    
-    public IMongoCollection<T> GetCollection<T, TId>() 
-        where T : IEntity<TId> 
-        where TId: IEquatable<TId>
+
+    public IMongoClient GetClient() => _client;
+
+    public IMongoDatabase GetDatabase() => _database;
+
+    public IMongoCollection<T> GetCollection<T>()
     {
         return _database.GetCollection<T>(GetCollectionName(typeof(T)));
     }
